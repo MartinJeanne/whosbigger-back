@@ -1,10 +1,15 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-app.use(cors());
 const port = 3001;
 
 const townFRprovider = require('./provider/townFRprovider');
+
+app.use(cors({
+    origin: 'http://62.171.131.91', // Allow the specific origin
+    methods: 'GET, POST, PUT, DELETE, OPTIONS',
+    allowedHeaders: 'Content-Type, Authorization',
+}));
 
 app.get('/game/create', async (req, res) => {
 });
