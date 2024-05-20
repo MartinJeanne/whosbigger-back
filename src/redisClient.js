@@ -1,26 +1,29 @@
 const { createClient } = require('redis');
 const expirationTime = 86400; // 24h
 
-exports.saveJSON = async function (key, value) {
-  const client = await createClient()
+const createRedisClient = async () => {
+  const client = await createClient({ url: process.env.REDIS_URL })
     .on('error', err => console.log('Redis Client Error', err))
     .connect();
-
-  const keyStr = String(key);
-  await client.json.set(keyStr, '.', value);
-  await client.expire(keyStr, expirationTime);
-
-  await client.disconnect();
-}
+  return client;
+};
 
 exports.getJSON = async function (key) {
-  const client = await createClient()
-    .on('error', err => console.log('Redis Client Error', err))
-    .connect();
+  const client = await createRedisClient();
 
   const keyStr = String(key);
   const value = await client.json.get(keyStr);
   await client.disconnect();
 
   return value;
+}
+
+exports.saveJSON = async function (key, value) {
+  const client = await createRedisClient();
+
+  const keyStr = String(key);
+  await client.json.set(keyStr, '.', value);
+  await client.expire(keyStr, expirationTime);
+
+  await client.disconnect();
 }

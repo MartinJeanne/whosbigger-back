@@ -6,7 +6,6 @@ const port = 3001;
 
 const townFRprovider = require('./provider/townFRprovider');
 
-
 app.get('/game/create', async (req, res) => {
 });
 
@@ -30,7 +29,6 @@ app.get('/game/continue', async (req, res) => {
     res.send(choice);
 });
 
-// Démarrer le serveur
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`whosbigger-back is running on port: ${port}`);
 });
