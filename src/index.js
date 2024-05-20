@@ -6,7 +6,7 @@ const port = 3001;
 const townFRprovider = require('./provider/townFRprovider');
 
 app.use(cors({
-    origin: 'http://62.171.131.91', // Allow the specific origin
+    origin: ['http://62.171.131.91', 'http://62.171.131.91:3000'], // Allow the specifics origins
     methods: 'GET, POST, PUT, DELETE, OPTIONS',
     allowedHeaders: 'Content-Type, Authorization',
 }));
