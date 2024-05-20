@@ -3,7 +3,10 @@ const expirationTime = 86400; // 24h
 
 const createRedisClient = async () => {
   const client = await createClient({ url: process.env.REDIS_URL })
-    .on('error', err => console.log('Redis Client Error', err))
+    .on('error', err => {
+      console.error('Redis Client Error', err)
+      throw Error('Redis Client Error', err)
+    })
     .connect();
   return client;
 };
