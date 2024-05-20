@@ -11,9 +11,8 @@ exports.getChoice = async function (choiceType) {
 
         // Remove the villages
         allChoices = allChoices.filter((c) => c.population > 2000);
+        redis.saveJSON(choiceType, allChoices);
     }
-
-    redis.saveJSON(choiceType, allChoices);
 
     const rawChoice1 = getRandomElement(allChoices);
     const indexToDelete = allChoices.indexOf(rawChoice1);
@@ -32,17 +31,17 @@ function toChoices(rawChoice1, rawChoice2) {
     const choice1 = {
         name: rawChoice1.nom,
         data: rawChoice1.population,
-        correctAwnser: false
+        isCorrectAwnser: false
     }
     const choice2 = {
         name: rawChoice2.nom,
         data: rawChoice2.population,
-        correctAwnser: false
+        isCorrectAwnser: false
     }
 
     if (choice1.data > choice2.data)
-        choice1.correctAwnser = true;
+        choice1.isCorrectAwnser = true;
 
-    choice2.correctAwnser = !choice1.correctAwnser;
+    choice2.isCorrectAwnser = !choice1.isCorrectAwnser;
     return [choice1, choice2];
 }
