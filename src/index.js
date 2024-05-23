@@ -5,11 +5,30 @@ const port = 3001;
 
 const townFRprovider = require('./provider/townFRprovider');
 
-app.use(cors({
-    origin: ['http://62.171.131.91', 'http://62.171.131.91:3000'], // Allow the specifics origins
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (checkOrigin(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: 'GET, POST, PUT, DELETE, OPTIONS',
     allowedHeaders: 'Content-Type, Authorization',
-}));
+};
+
+const checkOrigin = (origin) => {
+    // Check if the origin is undefined (for same-origin requests like Postman or curl)
+    if (!origin) return true;
+    
+    // Extract the hostname from the origin
+    const hostname = new URL(origin).hostname;
+
+    // Allow if the hostname matches the allowed IP address
+    return ['localhost', '62.171.131.91'].includes(hostname);
+};
+
+app.use(cors(corsOptions));
 
 app.get('/game/create', async (req, res) => {
 });
