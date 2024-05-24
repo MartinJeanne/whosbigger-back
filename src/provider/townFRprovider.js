@@ -8,7 +8,7 @@ exports.getChoice = async function (choiceType) {
     let allCities = await redis.getJSON(choiceType);
 
     if (!allCities) {
-        allCities = await fetch(`${apiGeo}/departements/14/communes`)
+        allCities = await fetch(`${apiGeo}/departements/14/communes?fields=nom,centre,population`)
             .then(response => response.json())
             .catch(console.error);
 
@@ -25,23 +25,24 @@ exports.getChoice = async function (choiceType) {
     const choices = toChoices(city1, city2);
 
     for (let i = 0; i < choices.length; i++) {
-        choices[i].metadata.weather = await getWeather(choices[i].name);
+        choices[i].metadata.weather = await getWeather(choices[i].metadata.location);
     }
 
     return choices;
 }
 
-async function getWeather(name) {
-    const cityName = name.replace(' ', '+');
+async function getWeather(location) {
+    const lon = location.coordinates[0];
+    const lat = location.coordinates[1];
 
-    const weatherRes = await fetch(`http://wttr.in/${cityName}?format=3`)
+    const weather = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m`)
+        .then(response => {
+            if (response.ok) return response.json()
+        })
         .catch(console.error);
 
-    if (weatherRes.ok) {
-        let weather = await weatherRes.text();
-        weather = weather.slice(0, -1);
-        return weather;
-    }
+    if (weather) return `${weather.current.temperature_2m}°C`;
+    return '';
 }
 
 function getRandomElement(arr) {
@@ -66,14 +67,18 @@ function toChoices(rawChoice1, rawChoice2) {
         name: rawChoice1.nom,
         data: rawChoice1.population,
         image: '',
-        metadata: {},
+        metadata: {
+            location: rawChoice1.centre
+        },
         isCorrectAwnser: false,
     }
     const choice2 = {
         name: rawChoice2.nom,
         data: rawChoice2.population,
         image: '',
-        metadata: {},
+        metadata: {
+            location: rawChoice2.centre
+        },
         isCorrectAwnser: false,
     }
 
