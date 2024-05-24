@@ -1,7 +1,4 @@
-const { response } = require('express');
 const redis = require('../redisClient');
-const google = require('googlethis');
-
 const apiGeo = 'https://geo.api.gouv.fr';
 
 exports.getChoice = async function (choiceType) {
@@ -37,7 +34,7 @@ async function getWeather(location) {
 
     const weather = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m`)
         .then(response => {
-            if (response.ok) return response.json()
+            if (response.ok) return response.json();
         })
         .catch(console.error);
 
@@ -49,18 +46,6 @@ function getRandomElement(arr) {
     const randomIndex = Math.floor(Math.random() * arr.length);
     return arr[randomIndex];
 }
-
-async function getImage(choice) {
-    const searchOptions = {
-        safe: false, // Safe Search
-        parse_ads: false, // If set to true sponsored results will be parsed
-    }
-
-    const images = await google.image(`${choice.name}`, searchOptions);
-    if (images) return images[0];
-}
-
-
 
 function toChoices(rawChoice1, rawChoice2) {
     const choice1 = {
