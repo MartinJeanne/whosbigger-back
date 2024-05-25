@@ -1,7 +1,7 @@
 const redis = require('../redisClient');
 const apiGeo = 'https://geo.api.gouv.fr';
 
-exports.getChoice = async function (choiceType) {
+exports.getChoices = async function (choiceType) {
     let allCities = await redis.getJSON(choiceType);
 
     if (!allCities) {
@@ -13,6 +13,12 @@ exports.getChoice = async function (choiceType) {
         allCities = allCities.filter((c) => c.population > 2000);
         redis.saveJSON(choiceType, allCities);
     }
+
+    return allCities;
+}
+
+exports.getChoice = async function (choiceType) {
+    const allCities = exports.getChoices(choiceType);
 
     const city1 = getRandomElement(allCities);
     const indexToDelete = allCities.indexOf(city1);

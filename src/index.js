@@ -4,7 +4,7 @@ const app = express();
 const port = 3001;
 
 const townFRprovider = require('./provider/townFRprovider');
-const getImage = require('./getImage');
+const { getImage, scrapAllImage } = require('./getImage');
 
 const corsOptions = {
     origin: (origin, callback) => {
@@ -51,9 +51,11 @@ app.get('/choices', async (req, res) => {
 app.get('/choices/:name/image', async (req, res) => {
     const imageUrl = await getImage(req.params.name);
 
-    if(imageUrl) res.send({ image: imageUrl });
+    if (imageUrl) res.send({ image: imageUrl });
     else res.status(404).send('Image not found');
 });
+
+scrapAllImage('townFR');
 
 app.listen(port, () => {
     console.log(`whosbigger-back is running on port: ${port}`);

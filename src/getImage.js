@@ -1,7 +1,8 @@
 const jsdom = require("jsdom");
 const redis = require('./redisClient');
+const townFRprovider = require('./provider/townFRprovider');
 
-module.exports = async function (choiceName) {
+exports.getImage = async function (choiceName) {
     if (!choiceName) return '';
 
     const key = `${choiceName}_IMG`;
@@ -17,6 +18,18 @@ module.exports = async function (choiceName) {
     }
 
     return imageUrl;
+}
+
+exports.scrapAllImage = async function (choiceType) {
+    const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+
+    const allCities = await townFRprovider.getChoices(choiceType);
+
+    for (let i = 0; i < allCities.length; i++) {
+        const img = await exports.getImage(allCities[i].nom);
+        await delay(200);
+    }
+    console.log('Image fetch finished!');
 }
 
 async function scrapWikipediaImage(name) {
