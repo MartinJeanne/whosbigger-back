@@ -27,6 +27,26 @@ exports.saveJSON = async function (key, value) {
   const keyStr = String(key);
   await client.json.set(keyStr, '.', value);
   await client.expire(keyStr, expirationTime);
+  await client.disconnect();
+}
 
+exports.getSTR = async function (key) {
+  const client = await createRedisClient();
+
+  const keyStr = String(key);
+  const value = await client.get(keyStr);
+  await client.disconnect();
+
+  return value;
+
+}
+
+
+exports.saveSTR = async function (key, value) {
+  const client = await createRedisClient();
+
+  const keyStr = String(key);
+  await client.set(keyStr, value);
+  await client.expire(keyStr, expirationTime);
   await client.disconnect();
 }

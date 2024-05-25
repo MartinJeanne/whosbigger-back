@@ -4,6 +4,7 @@ const app = express();
 const port = 3001;
 
 const townFRprovider = require('./provider/townFRprovider');
+const getImage = require('./getImage');
 
 const corsOptions = {
     origin: (origin, callback) => {
@@ -20,7 +21,7 @@ const corsOptions = {
 const checkOrigin = (origin) => {
     // Check if the origin is undefined (for same-origin requests like Postman or curl)
     if (!origin) return true;
-    
+
     // Extract the hostname from the origin
     const hostname = new URL(origin).hostname;
 
@@ -30,13 +31,7 @@ const checkOrigin = (origin) => {
 
 app.use(cors(corsOptions));
 
-app.get('/game/create', async (req, res) => {
-});
-
-app.get('/game/stop', async (req, res) => {
-});
-
-app.get('/game/continue', async (req, res) => {
+app.get('/choices', async (req, res) => {
     if (!req.query.choiceType)
         return res.send({ error: 'Query params must be defined: choiceType ' });
 
@@ -51,6 +46,11 @@ app.get('/game/continue', async (req, res) => {
     }
 
     res.send(choice);
+});
+
+app.get('/choices/:name/image', async (req, res) => {
+    const imageUrl = await getImage(req.params.name)
+    res.send({ image: imageUrl });
 });
 
 app.listen(port, () => {

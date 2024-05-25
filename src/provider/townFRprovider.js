@@ -1,4 +1,3 @@
-const jsdom = require("jsdom");
 const redis = require('../redisClient');
 const apiGeo = 'https://geo.api.gouv.fr';
 
@@ -24,7 +23,6 @@ exports.getChoice = async function (choiceType) {
 
     for (let i = 0; i < choices.length; i++) {
         choices[i].metadata.weather = await getWeather(choices[i].metadata.location);
-        choices[i].image = await scrapWikipediaImage(choices[i].name);
     }
 
     return choices;
@@ -44,19 +42,6 @@ async function getWeather(location) {
     return '';
 }
 
-async function scrapWikipediaImage(name) {
-    return await fetch(`https://fr.wikipedia.org/wiki/${name}`)
-        .then(response => response.text())
-        .then(function (html) {
-            const dom = new jsdom.JSDOM(html);
-            const table = dom.window.document.querySelector('table.infobox_v2.infobox');
-            const img = table.querySelector('img');
-            console.log(`https:${img.src}`);
-            return `https:${img.src}`;
-        })
-        .catch(console.error);
-}
-
 function getRandomElement(arr) {
     const randomIndex = Math.floor(Math.random() * arr.length);
     return arr[randomIndex];
@@ -66,7 +51,6 @@ function toChoices(rawChoice1, rawChoice2) {
     const choice1 = {
         name: rawChoice1.nom,
         data: rawChoice1.population,
-        image: '',
         metadata: {
             location: rawChoice1.centre
         },
@@ -75,7 +59,6 @@ function toChoices(rawChoice1, rawChoice2) {
     const choice2 = {
         name: rawChoice2.nom,
         data: rawChoice2.population,
-        image: '',
         metadata: {
             location: rawChoice2.centre
         },
