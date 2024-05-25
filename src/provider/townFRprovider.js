@@ -18,7 +18,7 @@ exports.getChoices = async function (choiceType) {
 }
 
 exports.getChoice = async function (choiceType) {
-    const allCities = exports.getChoices(choiceType);
+    const allCities = await exports.getChoices(choiceType);
 
     const city1 = getRandomElement(allCities);
     const indexToDelete = allCities.indexOf(city1);
