@@ -26,7 +26,7 @@ exports.saveJSON = async function (key, value) {
 
   const keyStr = String(key);
   await client.json.set(keyStr, '.', value);
-  await client.expire(keyStr, expirationTime);
+  //await client.expire(keyStr, expirationTime);
   await client.disconnect();
 }
 
@@ -47,6 +47,6 @@ exports.saveSTR = async function (key, value) {
 
   const keyStr = String(key);
   await client.set(keyStr, value);
-  await client.expire(keyStr, expirationTime);
+  //await client.expire(keyStr, expirationTime);
   await client.disconnect();
 }

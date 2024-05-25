@@ -49,8 +49,10 @@ app.get('/choices', async (req, res) => {
 });
 
 app.get('/choices/:name/image', async (req, res) => {
-    const imageUrl = await getImage(req.params.name)
-    res.send({ image: imageUrl });
+    const imageUrl = await getImage(req.params.name);
+
+    if(imageUrl) res.send({ image: imageUrl });
+    else res.status(404);
 });
 
 app.listen(port, () => {
