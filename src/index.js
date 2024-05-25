@@ -52,7 +52,7 @@ app.get('/choices/:name/image', async (req, res) => {
     const imageUrl = await getImage(req.params.name);
 
     if(imageUrl) res.send({ image: imageUrl });
-    else res.status(404);
+    else res.status(404).send('Image not found');
 });
 
 app.listen(port, () => {
