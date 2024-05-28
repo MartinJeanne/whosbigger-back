@@ -9,23 +9,35 @@ exports.getChoices = async function () {
             .then(response => response.json())
             .catch(console.error);
 
-        // Remove the villages
-        allCommunes = allCommunes.filter((c) => c.population > 2000);
         mongoDB.saveCommunes(allCommunes);
     }
 
     return allCommunes;
 }
 
-exports.getChoice = async function () {
-    const allCities = await exports.getChoices();
+exports.getChoice = async function (difficulty) {
+    let allCommunes = await exports.getChoices();
 
-    const city1 = getRandomElement(allCities);
-    const indexToDelete = allCities.indexOf(city1);
-    allCities.splice(indexToDelete, 1);
-    const city2 = getRandomElement(allCities);
+    switch (difficulty) {
+        case 'hard':
+            // Keep all the communes
+            break;
 
-    const choices = toChoices(city1, city2);
+        case 'medmium':
+            allCommunes = allCommunes.filter((c) => c.population > 2000);
+            break;
+
+        case 'easy':
+            allCommunes = allCommunes.filter((c) => c.population > 4000);
+            break;
+    }
+
+    const commune1 = getRandomElement(allCommunes);
+    const indexToDelete = allCommunes.indexOf(commune1);
+    allCommunes.splice(indexToDelete, 1);
+    const commune2 = getRandomElement(allCommunes);
+
+    const choices = toChoices(commune1, commune2);
 
     for (let i = 0; i < choices.length; i++) {
         choices[i].metadata.weather = await getWeather(choices[i].metadata.location);
