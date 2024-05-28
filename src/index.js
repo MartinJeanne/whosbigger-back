@@ -35,7 +35,7 @@ app.get('/choices', async (req, res) => {
     const difficulty = req.query.difficulty;
     const difficultyEnum = ['hard', 'medium', 'easy'];
 
-    if (!difficultyEnum.includes(difficulty))
+    if (!difficulty || !difficultyEnum.includes(difficulty))
         return res.status(400).send({ error: `'${difficulty}' isn't a valid difficulty. Valid ones are: ${difficultyEnum}` })
     let choice = await townFRprovider.getChoice(difficulty);
     res.send(choice);
