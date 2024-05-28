@@ -21,7 +21,7 @@ const CommuneSchema = new Schema({
       type: [Number],
     }
   },
-  poplation: Number,
+  population: Number,
   code: String
 });
 
@@ -30,6 +30,7 @@ const Commune = mongoose.model('commune', CommuneSchema);
 mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log('Connected to mongo!'))
   .catch(console.error);
+
 
 exports.saveImage = async function (name, url) {
   await Image.create({ name, url });
