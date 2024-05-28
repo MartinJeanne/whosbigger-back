@@ -3,7 +3,7 @@ const cors = require('cors');
 const app = express();
 const port = 3001;
 
-const townFRprovider = require('./provider/townFRprovider');
+const townFRprovider = require('./provider/communesProvider');
 const { getImage, scrapAllImage } = require('./getImage');
 
 const corsOptions = {
@@ -32,19 +32,7 @@ const checkOrigin = (origin) => {
 app.use(cors(corsOptions));
 
 app.get('/choices', async (req, res) => {
-    if (!req.query.choiceType)
-        return res.send({ error: 'Query params must be defined: choiceType ' });
-
-    let choice;
-    switch (req.query.choiceType) {
-        case 'townFR':
-            choice = await townFRprovider.getChoice(req.query.choiceType);
-            break;
-
-        default:
-            return res.send({ error: 'Unknow choice type' });
-    }
-
+    let choice = await townFRprovider.getChoice();
     res.send(choice);
 });
 
@@ -55,7 +43,10 @@ app.get('/choices/:name/image', async (req, res) => {
     else res.status(404).send('Image not found');
 });
 
-scrapAllImage('townFR');
+app.post('/choices/images', async (req, res) => {
+    await scrapAllImage();
+    res.send('Scraped all images!');
+});
 
 app.listen(port, () => {
     console.log(`whosbigger-back is running on port: ${port}`);

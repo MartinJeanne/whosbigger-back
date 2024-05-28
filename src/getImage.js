@@ -1,35 +1,34 @@
 const jsdom = require("jsdom");
-const redis = require('./redisClient');
-const townFRprovider = require('./provider/townFRprovider');
+const mongoDB = require('./mongoClient');
+const townFRprovider = require('./provider/communesProvider');
 
 exports.getImage = async function (choiceName) {
     if (!choiceName) return '';
 
-    const key = `${choiceName}_IMG`;
-    let imageUrl = await redis.getSTR(key);
-    if (imageUrl) return imageUrl;
+    let image = await mongoDB.getImage(choiceName);
+    if (image) return image.url;
 
     try {
-        imageUrl = await scrapWikipediaImage(choiceName);
-        if (imageUrl) redis.saveSTR(key, imageUrl);
+        const imageUrl = await scrapWikipediaImage(choiceName);
+        if (imageUrl) {
+            mongoDB.saveImage(choiceName, imageUrl);
+            return imageUrl;
+        }
     } catch (error) {
         console.error(error);
         return '';
     }
-
-    return imageUrl;
 }
 
-exports.scrapAllImage = async function (choiceType) {
+exports.scrapAllImage = async function () {
     const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-    const allCities = await townFRprovider.getChoices(choiceType);
+    const allCities = await townFRprovider.getChoices();
 
     for (let i = 0; i < allCities.length; i++) {
         const img = await exports.getImage(allCities[i].nom);
         await delay(200);
     }
-    console.log('Image fetch finished!');
 }
 
 async function scrapWikipediaImage(name) {

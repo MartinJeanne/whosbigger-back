@@ -1,5 +1,6 @@
 # Redis
-docker run -d --name whosbigger-redis --net="whosbigger" -p 6379:6379 -v /local-data/:/data -e REDIS_ARGS="--save 20 1" redis/redis-stack:latest
+docker run -d --name whosbigger-db --net="whosbigger" -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME="root" -e MONGO_INITDB_ROOT_PASSWORD="root" -e MONGO_INITDB_DATABASE="choices" mongo:7
+
 
 # Back
 docker build -t whosbigger-back .

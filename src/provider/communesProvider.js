@@ -1,24 +1,24 @@
-const redis = require('../redisClient');
+const mongoDB = require('../mongoClient');
 const apiGeo = 'https://geo.api.gouv.fr';
 
-exports.getChoices = async function (choiceType) {
-    let allCities = await redis.getJSON(choiceType);
+exports.getChoices = async function () {
+    let allCommunes = await mongoDB.getCommunes();
 
-    if (!allCities) {
-        allCities = await fetch(`${apiGeo}/departements/14/communes?fields=nom,centre,population`)
+    if (allCommunes.length === 0) {
+        allCommunes = await fetch(`${apiGeo}/departements/14/communes?fields=nom,centre,population`)
             .then(response => response.json())
             .catch(console.error);
 
         // Remove the villages
-        allCities = allCities.filter((c) => c.population > 2000);
-        redis.saveJSON(choiceType, allCities);
+        allCommunes = allCommunes.filter((c) => c.population > 2000);
+        mongoDB.saveCommunes(allCommunes);
     }
 
-    return allCities;
+    return allCommunes;
 }
 
-exports.getChoice = async function (choiceType) {
-    const allCities = await exports.getChoices(choiceType);
+exports.getChoice = async function () {
+    const allCities = await exports.getChoices();
 
     const city1 = getRandomElement(allCities);
     const indexToDelete = allCities.indexOf(city1);

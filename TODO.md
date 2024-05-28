@@ -1,0 +1,1 @@
+mode: hard, medium, easy
