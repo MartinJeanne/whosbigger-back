@@ -23,7 +23,7 @@ exports.getChoice = async function (difficulty) {
             // Keep all the communes
             break;
 
-        case 'medmium':
+        case 'medium':
             allCommunes = allCommunes.filter((c) => c.population > 2000);
             break;
 
