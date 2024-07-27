@@ -8,6 +8,9 @@ RUN npm install
 # Environnement variables
 COPY .env .
 
+# SSL self signed certificate
+COPY sslcert sslcert/
+
 # Code
 COPY src src
 
