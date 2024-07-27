@@ -1,14 +1,20 @@
+const fs = require('fs');
+const http = require('http');
+const https = require('https');
+const privateKey  = fs.readFileSync('sslcert/selfsigned.key', 'utf8');
+const certificate = fs.readFileSync('sslcert/selfsigned.crt', 'utf8');
+
+const credentials = {key: privateKey, cert: certificate};
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const port = 3001;
+app.use(cors());
 
 const townFRprovider = require('./provider/communesProvider');
 const { getImage, scrapAllImage } = require('./getImage');
 
-app.use(cors());
 
-app.get('/choices', async (req, res) => {
+app.get('/api/choices', async (req, res) => {
     const difficulty = req.query.difficulty;
     const difficultyEnum = ['hard', 'medium', 'easy'];
 
@@ -18,18 +24,25 @@ app.get('/choices', async (req, res) => {
     res.send(choice);
 });
 
-app.get('/choices/:name/image', async (req, res) => {
+app.get('/api/choices/:name/image', async (req, res) => {
     const imageUrl = await getImage(req.params.name);
 
     if (imageUrl) res.send({ image: imageUrl });
     else res.status(404).send('Image not found');
 });
 
-app.post('/choices/images', async (req, res) => {
+app.post('/api/choices/images', async (req, res) => {
     await scrapAllImage();
     res.send('Scraped all images!');
 });
 
-app.listen(port, () => {
-    console.log(`whosbigger-back is running on port: ${port}`);
+const httpServer = http.createServer(app);
+const httpsServer = https.createServer(credentials, app);
+
+httpServer.listen(3001, () => {
+    console.log(`http server of whosbigger-back is ready!`);
+});
+
+httpsServer.listen(443, () => {
+    console.log(`https server of whosbigger-back is ready!`);
 });
