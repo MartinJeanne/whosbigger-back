@@ -5,22 +5,6 @@ const app = express();
 const townFRprovider = require('./provider/communesProvider');
 const { getImage, scrapAllImage } = require('./getImage');
 
-// CORS
-const allowedOrigins = ['linkstart.club', 'www.linkstart.club']
-app.use(function (req, res, next) {
-    console.log('Begin CORS');
-    if (req.method === 'OPTIONS') {
-        res.setHeader('Access-Control-Allow-Headers', 'Accept, Content-Type');
-    }
-
-    const origin = req.get('origin');
-    if (origin && allowedOrigins.includes(origin)) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-        console.log('Header set for CORS');
-    }
-    next();
-});
-
 app.get('/api/choices', async (req, res) => {
     const difficulty = req.query.difficulty;
     const difficultyEnum = ['hard', 'medium', 'easy'];
