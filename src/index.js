@@ -8,6 +8,7 @@ const { getImage, scrapAllImage } = require('./getImage');
 // CORS
 const allowedOrigins = ['linkstart.club', 'www.linkstart.club']
 app.use(function (req, res, next) {
+    console.log('Begin CORS');
     if (req.method === 'OPTIONS') {
         res.setHeader('Access-Control-Allow-Headers', 'Accept, Content-Type');
     }
@@ -15,6 +16,7 @@ app.use(function (req, res, next) {
     const origin = req.get('origin');
     if (origin && allowedOrigins.includes(origin)) {
         res.setHeader('Access-Control-Allow-Origin', origin);
+        console.log('Header set for CORS');
     }
     next();
 });
