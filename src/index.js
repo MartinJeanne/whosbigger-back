@@ -1,18 +1,23 @@
-const fs = require('fs');
 const http = require('http');
-const https = require('https');
-const privateKey  = fs.readFileSync('sslcert/selfsigned.key', 'utf8');
-const certificate = fs.readFileSync('sslcert/selfsigned.crt', 'utf8');
-
-const credentials = {key: privateKey, cert: certificate};
 const express = require('express');
-const cors = require('cors');
 const app = express();
-app.use(cors());
 
 const townFRprovider = require('./provider/communesProvider');
 const { getImage, scrapAllImage } = require('./getImage');
 
+// CORS
+const allowedOrigins = ['linkstart.club', 'www.linkstart.club']
+app.use(function (req, res, next) {
+    if (req.method === 'OPTIONS') {
+        res.setHeader('Access-Control-Allow-Headers', 'Accept, Content-Type');
+    }
+
+    const origin = req.get('origin');
+    if (origin && allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+    next();
+});
 
 app.get('/api/choices', async (req, res) => {
     const difficulty = req.query.difficulty;
@@ -36,13 +41,7 @@ app.post('/api/choices/images', async (req, res) => {
     res.send('Scraped all images!');
 });
 
-const httpServer = http.createServer(app);
-const httpsServer = https.createServer(credentials, app);
-
-httpServer.listen(3001, () => {
-    console.log(`http server of whosbigger-back is ready!`);
-});
-
-httpsServer.listen(443, () => {
-    console.log(`https server of whosbigger-back is ready!`);
+const port = 3000;
+http.createServer(app).listen(port, () => {
+    console.log(`whosbigger-back REST API listening on port: ${port}`);
 });
