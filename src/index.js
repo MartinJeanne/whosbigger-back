@@ -6,6 +6,7 @@ const townFRprovider = require('./provider/communesProvider');
 const { getImage, scrapAllImage } = require('./getImage');
 
 app.get('/api/choices', async (req, res) => {
+    console.log('Origin: ' + req.headers.origin)
     const difficulty = req.query.difficulty;
     const difficultyEnum = ['hard', 'medium', 'easy'];
 
